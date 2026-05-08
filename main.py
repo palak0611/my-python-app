@@ -1,12 +1,35 @@
-from flask import Flask
+from flask import Flask, render_template, request, redirect
+from google.cloud import datastore
 
 app = Flask(__name__)
+datastore_client = datastore.Client()
 
-@app.route("/")
-def hello():
-    return "<h1>Hello, Google App Engine!</h1><p>Your Python app is running.</p>"
+def store_review(title, rating, comment):
+    # Create a new entity for the review
+    entity = datastore.Entity(key=datastore_client.key('Review'))
+    entity.update({
+        'title': title,
+        'rating': int(rating),
+        'comment': comment
+    })
+    datastore_client.put(entity)
 
-if __name__ == "__main__":
-    # This is used when running locally only. 
-    # When deploying to GAE, Gunicorn will serve the app.
-    app.run(host="127.0.0.1", port=8080, debug=True)
+def fetch_reviews():
+    # Query all reviews from Datastore
+    query = datastore_client.query(kind='Review')
+    return list(query.fetch())
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        title = request.form['title']
+        rating = request.form['rating']
+        comment = request.form['comment']
+        store_review(title, rating, comment)
+        return redirect('/')
+
+    reviews = fetch_reviews()
+    return render_template('index.html', reviews=reviews)
+
+if __name__ == '__main__':
+    app.run(host='127.0.0.1', port=8080, debug=True)
