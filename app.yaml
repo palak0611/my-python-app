@@ -1,1 +1,5 @@
-runtime: python311 # Or python39, python310
+runtime: python39  # Or your preferred Python version
+
+handlers:
+- url: /.*
+  script: auto
