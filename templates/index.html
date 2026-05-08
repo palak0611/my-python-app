@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>Movie Reviews</title></head>
+<body>
+    <h1>🎬 Movie Review System</h1>
+    <form method="POST">
+        <input type="text" name="title" placeholder="Movie Title" required><br>
+        <input type="number" name="rating" min="1" max="5" placeholder="Rating (1-5)"><br>
+        <textarea name="comment" placeholder="Write your review..."></textarea><br>
+        <button type="submit">Submit Review</button>
+    </form>
+    <hr>
+    <h2>Latest Reviews</h2>
+    {% for review in reviews %}
+        <div>
+            <strong>{{ review.title }}</strong> - {{ review.rating }}/5
+            <p>{{ review.comment }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>
